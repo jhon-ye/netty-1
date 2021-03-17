@@ -17,6 +17,7 @@ package io.netty.channel;
 
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.EventExecutorChooserFactory;
 import io.netty.util.concurrent.MultithreadEventExecutorGroup;
 import io.netty.util.internal.SystemPropertyUtil;
@@ -83,6 +84,7 @@ public abstract class MultithreadEventLoopGroup extends MultithreadEventExecutor
 
     @Override
     public ChannelFuture register(Channel channel) {
+        //(EventLoop)EventExecutor.register()
         return next().register(channel);
     }
 

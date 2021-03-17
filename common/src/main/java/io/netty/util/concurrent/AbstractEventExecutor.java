@@ -38,6 +38,7 @@ public abstract class AbstractEventExecutor extends AbstractExecutorService impl
     static final long DEFAULT_SHUTDOWN_TIMEOUT = 15;
 
     private final EventExecutorGroup parent;
+//    EventExecutor 数组。只包含自己，用于 {@link #iterator()}
     private final Collection<EventExecutor> selfCollection = Collections.<EventExecutor>singleton(this);
 
     protected AbstractEventExecutor() {
@@ -58,6 +59,7 @@ public abstract class AbstractEventExecutor extends AbstractExecutorService impl
         return this;
     }
 
+//    子类实现
     @Override
     public boolean inEventLoop() {
         return inEventLoop(Thread.currentThread());
@@ -159,6 +161,7 @@ public abstract class AbstractEventExecutor extends AbstractExecutorService impl
     /**
      * Try to execute the given {@link Runnable} and just log if it throws a {@link Throwable}.
      */
+//    所谓“安全”指的是，当任务执行发生异常时，仅仅打印告警日志
     protected static void safeExecute(Runnable task) {
         try {
             task.run();

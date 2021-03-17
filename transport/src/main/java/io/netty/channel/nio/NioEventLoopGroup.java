@@ -111,8 +111,11 @@ public class NioEventLoopGroup extends MultithreadEventLoopGroup {
     }
 
     public NioEventLoopGroup(int nThreads, Executor executor, EventExecutorChooserFactory chooserFactory,
+                             // Selector SPI(Epoll Poll Select Kqueue)
                              final SelectorProvider selectorProvider,
+                             //
                              final SelectStrategyFactory selectStrategyFactory,
+                             // Executor 拒绝策略执行器
                              final RejectedExecutionHandler rejectedExecutionHandler,
                              final EventLoopTaskQueueFactory taskQueueFactory) {
         super(nThreads, executor, chooserFactory, selectorProvider, selectStrategyFactory,
@@ -123,6 +126,7 @@ public class NioEventLoopGroup extends MultithreadEventLoopGroup {
      * Sets the percentage of the desired amount of time spent for I/O in the child event loops.  The default value is
      * {@code 50}, which means the event loop will try to spend the same amount of time for I/O as for non-I/O tasks.
      */
+    // 设置 IO 任务在 EventLoop（I/O + 非I/O）的比例
     public void setIoRatio(int ioRatio) {
         for (EventExecutor e: this) {
             ((NioEventLoop) e).setIoRatio(ioRatio);

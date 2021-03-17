@@ -320,6 +320,9 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             return new DefaultChannelPromise(new FailedChannel(), GlobalEventExecutor.INSTANCE).setFailure(t);
         }
 
+        // ServerBootstrapConfig -> NioEventLoopGroup -> MultithreadEventExecutorGroup
+       // NioEventLoop(ThreadPerTaskExecutor)  -> SingleThreadEventLoop
+
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {

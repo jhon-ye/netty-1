@@ -64,25 +64,30 @@ abstract class AbstractChannelHandlerContext implements ChannelHandlerContext, R
     volatile AbstractChannelHandlerContext next;
     volatile AbstractChannelHandlerContext prev;
 
+//
     private static final AtomicIntegerFieldUpdater<AbstractChannelHandlerContext> HANDLER_STATE_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AbstractChannelHandlerContext.class, "handlerState");
 
     /**
      * {@link ChannelHandler#handlerAdded(ChannelHandlerContext)} is about to be called.
      */
+    // 添加准备中
     private static final int ADD_PENDING = 1;
     /**
      * {@link ChannelHandler#handlerAdded(ChannelHandlerContext)} was called.
      */
+//    已添加
     private static final int ADD_COMPLETE = 2;
     /**
      * {@link ChannelHandler#handlerRemoved(ChannelHandlerContext)} was called.
      */
+//    已删除
     private static final int REMOVE_COMPLETE = 3;
     /**
      * Neither {@link ChannelHandler#handlerAdded(ChannelHandlerContext)}
      * nor {@link ChannelHandler#handlerRemoved(ChannelHandlerContext)} was called.
      */
+    // 初始化
     private static final int INIT = 0;
 
     private final DefaultChannelPipeline pipeline;
@@ -99,6 +104,7 @@ abstract class AbstractChannelHandlerContext implements ChannelHandlerContext, R
     // There is no need to make this volatile as at worse it will just create a few more instances then needed.
     private Tasks invokeTasks;
 
+//    处理器状态
     private volatile int handlerState = INIT;
 
     AbstractChannelHandlerContext(DefaultChannelPipeline pipeline, EventExecutor executor,

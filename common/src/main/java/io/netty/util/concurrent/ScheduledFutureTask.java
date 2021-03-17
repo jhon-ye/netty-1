@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("ComparableImplementedButEqualsNotOverridden")
 final class ScheduledFutureTask<V> extends PromiseTask<V> implements ScheduledFuture<V>, PriorityQueueNode {
+
+    //定时任务时间起点
     private static final long START_TIME = System.nanoTime();
 
     static long nanoTime() {

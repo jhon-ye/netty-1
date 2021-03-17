@@ -47,9 +47,14 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
     static final InternalLogger logger = InternalLoggerFactory.getInstance(DefaultChannelPipeline.class);
 
+    /*
+    * HEAD_NAME = "HeadContext#0"
+    * TAIL_NAME= "TailContext#0"
+    * */
     private static final String HEAD_NAME = generateName0(HeadContext.class);
     private static final String TAIL_NAME = generateName0(TailContext.class);
 
+//    ({@link AbstractChannelHandlerContext#name})缓存 ，基于 ThreadLocal ，用于生成在线程中唯一的名字
     private static final FastThreadLocal<Map<Class<?>, String>> nameCaches =
             new FastThreadLocal<Map<Class<?>, String>>() {
         @Override
@@ -61,14 +66,19 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private static final AtomicReferenceFieldUpdater<DefaultChannelPipeline, MessageSizeEstimator.Handle> ESTIMATOR =
             AtomicReferenceFieldUpdater.newUpdater(
                     DefaultChannelPipeline.class, MessageSizeEstimator.Handle.class, "estimatorHandle");
+
     final AbstractChannelHandlerContext head;
     final AbstractChannelHandlerContext tail;
 
+//    所属 Channel 对象
     private final Channel channel;
+//    成功的 Promise 对象
     private final ChannelFuture succeededFuture;
+//    不进行通知的 Promise 对象, 对于一些方法执行，需要传入Promise类型方法参数，但是不需要通知
     private final VoidChannelPromise voidPromise;
     private final boolean touch = ResourceLeakDetector.isEnabled();
 
+//     默认情况下，ChannelHandler 使用 Channel 所在的 EventLoop 作为执行器。
     private Map<EventExecutorGroup, EventExecutor> childExecutors;
     private volatile MessageSizeEstimator.Handle estimatorHandle;
     private boolean firstRegistration = true;
@@ -81,6 +91,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
      * Thus full iterations to do insertions is assumed to be a good compromised to saving memory and tail management
      * complexity.
      */
+//    准备添加 ChannelHandler 的回调
     private PendingHandlerCallback pendingHandlerCallbackHead;
 
     /**
@@ -201,6 +212,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         synchronized (this) {
             checkMultiplicity(handler);
 
+//            创建新节点
             newCtx = newContext(group, filterName(name, handler), handler);
 
             addLast0(newCtx);

@@ -39,6 +39,8 @@ public class UnpooledHeapByteBuf extends AbstractReferenceCountedByteBuf {
 
     private final ByteBufAllocator alloc;
     byte[] array;
+
+    // 实现 Netty ByteBuf  <--> Java NIO ByteBuffer 的转换
     private ByteBuffer tmpNioBuf;
 
     /**
@@ -114,6 +116,7 @@ public class UnpooledHeapByteBuf extends AbstractReferenceCountedByteBuf {
         return array.length;
     }
 
+    // 动态扩展
     @Override
     public ByteBuf capacity(int newCapacity) {
         checkNewCapacity(newCapacity);
@@ -242,6 +245,7 @@ public class UnpooledHeapByteBuf extends AbstractReferenceCountedByteBuf {
         return readBytes;
     }
 
+    // 字节数组复制（）
     @Override
     public ByteBuf setBytes(int index, ByteBuf src, int srcIndex, int length) {
         checkSrcIndex(index, length, srcIndex, src.capacity());

@@ -22,24 +22,39 @@ import io.netty.util.internal.ReferenceCountUpdater;
 
 /**
  * Abstract base class for {@link ByteBuf} implementations that count references.
+ *
+ * 继承类   {@link UnpooledHeapByteBuf}      基于字节数组实现
+ *         {@link UnpooledDirectByteBuf}    基于JDK NIO DirectByteBuffer 实现
+ *
+ *         {@link PooledByteBuf}
+ *         <ul>
+ *             <li>
+ *                 {@link PoolArena} Netty 内存池实现类
+ *             </li>
+ *         </>
+ *
+ *
  */
 public abstract class AbstractReferenceCountedByteBuf extends AbstractByteBuf {
+
     private static final long REFCNT_FIELD_OFFSET =
             ReferenceCountUpdater.getUnsafeOffset(AbstractReferenceCountedByteBuf.class, "refCnt");
+
     private static final AtomicIntegerFieldUpdater<AbstractReferenceCountedByteBuf> AIF_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(AbstractReferenceCountedByteBuf.class, "refCnt");
+        AtomicIntegerFieldUpdater.newUpdater(AbstractReferenceCountedByteBuf.class, "refCnt");
 
     private static final ReferenceCountUpdater<AbstractReferenceCountedByteBuf> updater =
             new ReferenceCountUpdater<AbstractReferenceCountedByteBuf>() {
-        @Override
-        protected AtomicIntegerFieldUpdater<AbstractReferenceCountedByteBuf> updater() {
-            return AIF_UPDATER;
-        }
-        @Override
-        protected long unsafeOffset() {
-            return REFCNT_FIELD_OFFSET;
-        }
-    };
+                @Override
+                protected AtomicIntegerFieldUpdater<AbstractReferenceCountedByteBuf> updater() {
+                    return AIF_UPDATER;
+                }
+
+                @Override
+                protected long unsafeOffset() {
+                    return REFCNT_FIELD_OFFSET;
+                }
+            };
 
     // Value might not equal "real" reference count, all access should be via the updater
     @SuppressWarnings("unused")
