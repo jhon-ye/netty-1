@@ -175,12 +175,14 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         return this;
     }
 
+    /*服务器接收器( acceptor )，负责将接受的客户端的 NioSocketChannel 注册到 EventLoop 中。*/
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
         private final EventLoopGroup childGroup;
         private final ChannelHandler childHandler;
         private final Entry<ChannelOption<?>, Object>[] childOptions;
         private final Entry<AttributeKey<?>, Object>[] childAttrs;
+//        自动恢复接受客户端连接的任务
         private final Runnable enableAutoReadTask;
 
         ServerBootstrapAcceptor(
@@ -207,10 +209,10 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         @Override
         @SuppressWarnings("unchecked")
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
+//           接收客户端的NioSocketChannel 对象
             final Channel child = (Channel) msg;
-
+//            添加 NioSocketChannel 的处理器
             child.pipeline().addLast(childHandler);
-
             setChannelOptions(child, childOptions, logger);
             setAttributes(child, childAttrs);
 
@@ -239,6 +241,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             if (config.isAutoRead()) {
                 // stop accept new connections for 1 second to allow the channel to recover
                 // See https://github.com/netty/netty/issues/1328
+//                发起 1 秒的延迟任务，恢复重启开启接受新的客户端连接
                 config.setAutoRead(false);
                 ctx.channel().eventLoop().schedule(enableAutoReadTask, 1, TimeUnit.SECONDS);
             }

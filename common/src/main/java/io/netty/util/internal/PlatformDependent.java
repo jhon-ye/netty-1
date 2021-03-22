@@ -439,6 +439,8 @@ public final class PlatformDependent {
      * Creates a new fastest {@link LongCounter} implementation for the current platform.
      */
     public static LongCounter newLongCounter() {
+
+//        Metric 写多读少，所以 LongAdder 比 AtomicLong 更合适
         if (javaVersion() >= 8) {
             return new LongAdderCounter();
         } else {

@@ -28,11 +28,15 @@ import java.nio.channels.ScatteringByteChannel;
 
 abstract class PooledByteBuf<T> extends AbstractReferenceCountedByteBuf {
 
+//    Recycler 处理器，用于回收对象
     private final Handle<PooledByteBuf<T>> recyclerHandle;
-
+//PoolChunk 对象。在 Netty 中，使用 Jemalloc 算法管理内存
     protected PoolChunk<T> chunk;
+//    从 Chunk 对象中分配的内存块所处的位置
     protected long handle;
+//     内存空间。具体什么样的数据，通过子类设置泛型。
     protected T memory;
+//   memory 开始位置
     protected int offset;
     protected int length;
     int maxLength;
@@ -46,11 +50,13 @@ abstract class PooledByteBuf<T> extends AbstractReferenceCountedByteBuf {
         this.recyclerHandle = (Handle<PooledByteBuf<T>>) recyclerHandle;
     }
 
+//一般是基于 pooled 的 PoolChunk 对象，初始化 PooledByteBuf 对象
     void init(PoolChunk<T> chunk, ByteBuffer nioBuffer,
               long handle, int offset, int length, int maxLength, PoolThreadCache cache) {
         init0(chunk, nioBuffer, handle, offset, length, maxLength, cache);
     }
 
+//    基于 unPoolooled 的 PoolChunk 对象，初始化 PooledByteBuf 对象
     void initUnpooled(PoolChunk<T> chunk, int length) {
         init0(chunk, null, 0, chunk.offset, length, length, null);
     }
@@ -76,8 +82,11 @@ abstract class PooledByteBuf<T> extends AbstractReferenceCountedByteBuf {
      */
     final void reuse(int maxCapacity) {
         maxCapacity(maxCapacity);
+        // 设置引用数量为 0
         resetRefCnt();
+        // 重置读写索引为 0
         setIndex0(0, 0);
+        // 重置读写标记位为 0
         discardMarks();
     }
 

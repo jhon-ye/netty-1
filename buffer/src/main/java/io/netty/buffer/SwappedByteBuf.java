@@ -34,6 +34,7 @@ import java.nio.charset.Charset;
  * @deprecated use the Little Endian accessors, e.g. {@code getShortLE}, {@code getIntLE}
  * instead.
  */
+//用于构建具有切换字节序功能的 ByteBuf 对象
 @Deprecated
 public class SwappedByteBuf extends ByteBuf {
 

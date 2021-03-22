@@ -312,9 +312,11 @@ public class DefaultChannelConfig implements ChannelConfig {
     @Override
     public ChannelConfig setAutoRead(boolean autoRead) {
         boolean oldAutoRead = AUTOREAD_UPDATER.getAndSet(this, autoRead ? 1 : 0) == 1;
+//        发起读取
         if (autoRead && !oldAutoRead) {
             channel.read();
         } else if (!autoRead && oldAutoRead) {
+//        关闭读取
             autoReadCleared();
         }
         return this;

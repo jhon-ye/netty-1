@@ -15,6 +15,8 @@
  */
 package io.netty.buffer;
 
+
+/*用于监控 ByteBuf 的 Heap 和 Direct 占用内存的情况*/
 public interface ByteBufAllocatorMetricProvider {
 
     /**

@@ -45,6 +45,7 @@ final class PooledDirectByteBuf extends PooledByteBuf<ByteBuffer> {
         super(recyclerHandle, maxCapacity);
     }
 
+//    复制一个 ByteBuffer 对象，共享里面的数据。
     @Override
     protected ByteBuffer newInternalNioBuffer(ByteBuffer memory) {
         return memory.duplicate();
@@ -279,6 +280,7 @@ final class PooledDirectByteBuf extends PooledByteBuf<ByteBuffer> {
         return readBytes;
     }
 
+//    复制指定范围的数据到新创建的 Direct ByteBuf 对象
     @Override
     public ByteBuf copy(int index, int length) {
         checkIndex(index, length);

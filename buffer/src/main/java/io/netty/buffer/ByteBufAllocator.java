@@ -21,6 +21,8 @@ package io.netty.buffer;
  */
 public interface ByteBufAllocator {
 
+//    在非 Android 环境下，使用 PooledByteBufAllocator 作为默认 ByteBufAllocator 对象
+//在 Android 环境下，使用 UnpooledByteBufAllocator 作为默认 ByteBufAllocator 对象。因为 Android 客户端的内存相对有限。
     ByteBufAllocator DEFAULT = ByteBufUtil.DEFAULT_ALLOCATOR;
 
     /**

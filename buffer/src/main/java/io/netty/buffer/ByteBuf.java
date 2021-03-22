@@ -307,11 +307,13 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
     /**
      * Returns {@code true} if and only if this buffer is backed by an
      * NIO direct buffer.
+     * 是否 NIO Direct Buffer
      */
     public abstract boolean isDirect();
 
     /**
      * Returns {@code true} if and only if this buffer is read-only.
+     * 是否为只读 Buffer
      */
     public abstract boolean isReadOnly();
 
@@ -464,6 +466,11 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * from that of NIO buffer, which sets the {@code limit} to
      * the {@code capacity} of the buffer.
      */
+    /*
+    * 清空字节空间。实际是修改 readerIndex = writerIndex = 0, 标记清空
+    * 优点：通过标记来实现清空，避免置空ByteBuf,提升性能
+    * 缺点：数据实际还存在，如果错误修改wrierIndex时，会导致读到"脏数据"
+    * */
     public abstract ByteBuf clear();
 
     /**
@@ -510,6 +517,12 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * <p>
      * Please refer to the class documentation for more detailed explanation.
      */
+    /*
+    * 释放【所有的】废弃段的内存空间
+    * 优点：重用废弃段的内存空间
+    * 缺点：释放的方式，是通过复制可读段到ByteBuf头部，频繁释放会导致性能下降
+    *
+    * */
     public abstract ByteBuf discardReadBytes();
 
     /**
@@ -518,6 +531,10 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * overall memory bandwidth consumption at the cost of potentially additional memory
      * consumption.
      */
+    /*
+    * 释放【部分的】废弃段内存空间
+    *
+    * */
     public abstract ByteBuf discardSomeReadBytes();
 
     /**
@@ -564,6 +581,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 1} is greater than {@code this.capacity}
      */
+//     Boolean 1 字节
     public abstract boolean getBoolean(int index);
 
     /**
@@ -575,6 +593,8 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 1} is greater than {@code this.capacity}
      */
+
+//    Byte 1字节
     public abstract byte  getByte(int index);
 
     /**
@@ -597,6 +617,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 2} is greater than {@code this.capacity}
      */
+//     Short 2 字节
     public abstract short getShort(int index);
 
     /**
@@ -642,6 +663,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 3} is greater than {@code this.capacity}
      */
+//    【特殊】Medium 3 字节
     public abstract int   getMedium(int index);
 
     /**
@@ -687,6 +709,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 4} is greater than {@code this.capacity}
      */
+//    Int 4 字节
     public abstract int   getInt(int index);
 
     /**
@@ -731,6 +754,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 8} is greater than {@code this.capacity}
      */
+//    Long 8 字节
     public abstract long  getLong(int index);
 
     /**
@@ -753,6 +777,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 2} is greater than {@code this.capacity}
      */
+//    Char 2 字节
     public abstract char  getChar(int index);
 
     /**
@@ -764,6 +789,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 4} is greater than {@code this.capacity}
      */
+//    Float 4 字节
     public abstract float getFloat(int index);
 
     /**
@@ -789,6 +815,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if the specified {@code index} is less than {@code 0} or
      *         {@code index + 8} is greater than {@code this.capacity}
      */
+//    Double 8 字节
     public abstract double getDouble(int index);
 
     /**
@@ -821,6 +848,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      *         if {@code index + dst.writableBytes} is greater than
      *            {@code this.capacity}
      */
+//   Byte 数组
     public abstract ByteBuf getBytes(int index, ByteBuf dst);
 
     /**
@@ -973,6 +1001,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * @throws IndexOutOfBoundsException
      *         if {@code length} is greater than {@code this.readableBytes}
      */
+//    String
     public abstract CharSequence getCharSequence(int index, int length, Charset charset);
 
     /**
@@ -2350,6 +2379,8 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * If this method returns true, you can safely call {@link #array()} and
      * {@link #arrayOffset()}.
      */
+
+    //适用于 Heap 类型的 ByteBuf 对象的 byte[] 字节数组
     public abstract boolean hasArray();
 
     /**
@@ -2373,6 +2404,7 @@ public abstract class ByteBuf implements ReferenceCounted, Comparable<ByteBuf> {
      * Returns {@code true} if and only if this buffer has a reference to the low-level memory address that points
      * to the backing data.
      */
+//    适用于 Unsafe 类型的 ByteBuf 对象
     public abstract boolean hasMemoryAddress();
 
     /**

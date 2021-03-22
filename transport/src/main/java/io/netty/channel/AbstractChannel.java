@@ -889,12 +889,14 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
         public final void flush() {
             assertEventLoop();
 
+//            内存队列为 null ，一般是 Channel 已经关闭，所以直接返回。
             ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
             if (outboundBuffer == null) {
                 return;
             }
-
+        // 标记内存队列开始 flush
             outboundBuffer.addFlush();
+            // 执行 flush
             flush0();
         }
 

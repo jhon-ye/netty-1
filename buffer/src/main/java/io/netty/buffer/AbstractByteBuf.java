@@ -242,7 +242,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
                 writerIndex = readerIndex = 0;
                 return this;
             }
-
+//            读取超过容量的一半，进行释放
             if (readerIndex >= capacity() >>> 1) {
                 setBytes(0, this, readerIndex, writerIndex - readerIndex);
                 writerIndex -= readerIndex;
@@ -278,6 +278,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
         }
     }
 
+//  保证有足够的可写空间，如不够则进行扩容
     @Override
     public ByteBuf ensureWritable(int minWritableBytes) {
         ensureWritable0(checkPositiveOrZero(minWritableBytes, "minWritableBytes"));
@@ -289,6 +290,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
         final int targetCapacity = writerIndex + minWritableBytes;
         // using non-short-circuit & to reduce branching - this is a hot path and targetCapacity should rarely overflow
         if (targetCapacity >= 0 & targetCapacity <= capacity()) {
+//          检查引用计数， 判断对象是否是否可被访问
             ensureAccessible();
             return;
         }
@@ -299,6 +301,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
                     writerIndex, minWritableBytes, maxCapacity, this));
         }
 
+//        计算新的容量。默认情况下，2 倍扩容，并且不超过最大容量上限。
         // Normalize the target capacity to the power of 2.
         final int fastWritable = maxFastWritableBytes();
         int newCapacity = fastWritable >= minWritableBytes ? writerIndex + fastWritable
@@ -337,6 +340,7 @@ public abstract class AbstractByteBuf extends ByteBuf {
         return 2;
     }
 
+//    获得字节序, 【大端、小端】
     @Override
     public ByteBuf order(ByteOrder endianness) {
         if (endianness == order()) {

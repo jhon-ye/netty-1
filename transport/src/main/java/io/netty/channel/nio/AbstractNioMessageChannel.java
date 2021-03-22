@@ -55,10 +55,12 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
         super.doBeginRead();
     }
 
+//    客户端连接消息
     private final class NioMessageUnsafe extends AbstractNioUnsafe {
 
         private final List<Object> readBuf = new ArrayList<Object>();
 
+//        读取新的客户端连接
         @Override
         public void read() {
             assert eventLoop().inEventLoop();
@@ -88,6 +90,7 @@ public abstract class AbstractNioMessageChannel extends AbstractNioChannel {
                 }
 
                 int size = readBuf.size();
+//                循环 readBuf 数组，触发 Channel read 事件到 pipeline 中
                 for (int i = 0; i < size; i ++) {
                     readPending = false;
                     pipeline.fireChannelRead(readBuf.get(i));

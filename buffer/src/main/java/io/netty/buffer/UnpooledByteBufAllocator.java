@@ -28,6 +28,7 @@ public final class UnpooledByteBufAllocator extends AbstractByteBufAllocator imp
 
     private final UnpooledByteBufAllocatorMetric metric = new UnpooledByteBufAllocatorMetric();
     private final boolean disableLeakDetector;
+//    不使用 `io.netty.util.internal.Cleaner` 释放 Direct ByteBuf
     private final boolean noCleaner;
 
     /**
@@ -134,6 +135,7 @@ public final class UnpooledByteBufAllocator extends AbstractByteBufAllocator imp
         metric.heapCounter.add(-amount);
     }
 
+//    Instrumented  +ByteBuf [因为要和 Metric 结合]
     private static final class InstrumentedUnpooledUnsafeHeapByteBuf extends UnpooledUnsafeHeapByteBuf {
         InstrumentedUnpooledUnsafeHeapByteBuf(UnpooledByteBufAllocator alloc, int initialCapacity, int maxCapacity) {
             super(alloc, initialCapacity, maxCapacity);
@@ -142,6 +144,7 @@ public final class UnpooledByteBufAllocator extends AbstractByteBufAllocator imp
         @Override
         protected byte[] allocateArray(int initialCapacity) {
             byte[] bytes = super.allocateArray(initialCapacity);
+//            metric ++
             ((UnpooledByteBufAllocator) alloc()).incrementHeap(bytes.length);
             return bytes;
         }
@@ -246,6 +249,7 @@ public final class UnpooledByteBufAllocator extends AbstractByteBufAllocator imp
         }
     }
 
+//    监控 ByteBuf 的 Heap 和 Direct 占用内存的情况
     private static final class UnpooledByteBufAllocatorMetric implements ByteBufAllocatorMetric {
         final LongCounter directCounter = PlatformDependent.newLongCounter();
         final LongCounter heapCounter = PlatformDependent.newLongCounter();
